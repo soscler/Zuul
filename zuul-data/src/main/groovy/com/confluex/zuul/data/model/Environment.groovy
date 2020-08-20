@@ -5,6 +5,7 @@ import groovy.transform.ToString
 import com.confluex.zuul.data.config.ZuulDataConstants
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.annotations.Type
 
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
@@ -28,6 +29,8 @@ class Environment implements Serializable {
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "environment")
     List<SettingsGroup> groups = []
 
+    @Column(columnDefinition = "TINYINT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean restricted = false
 
     Integer ordinal = 0

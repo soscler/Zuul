@@ -8,7 +8,7 @@
             <column name="NAME" type="VARCHAR(32)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_ENCRYPTION_KEY"/>
             </column>
-            <column name="DEFAULT_KEY" type="BOOLEAN"/>
+            <column name="DEFAULT_KEY" type="TINYINT"/>
             <column name="DESCRIPTION" type="VARCHAR(64)"/>
             <column name="PASSWORD" type="VARCHAR(32)">
                 <constraints nullable="false"/>
@@ -31,7 +31,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SECURITY_USER"/>
             </column>
             <column name="EMAIL" type="VARCHAR(255)"/>
-            <column name="ENABLED" type="BOOLEAN">
+            <column name="ENABLED" type="TINYINT">
                 <constraints nullable="false"/>
             </column>
             <column name="FIRST_NAME" type="VARCHAR(255)"/>
@@ -50,7 +50,7 @@
             <column autoIncrement="true" name="ID" type="INT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SETTINGS_ENTRY"/>
             </column>
-            <column name="ENCRYPTED" type="BOOLEAN">
+            <column name="ENCRYPTED" type="TINYINT">
                 <constraints nullable="false"/>
             </column>
             <column name="KEY_NAME" type="VARCHAR(255)">

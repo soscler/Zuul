@@ -6,7 +6,7 @@
     <changeSet author="mcantrell" id="zuul-1.2-add-environment-restrictions">
         <validCheckSum>3:ef4ba02b7bf3dffff05d11de424f1b6e</validCheckSum>
         <addColumn tableName="ENVIRONMENT">
-            <column name="RESTRICTED" type="BOOLEAN" defaultValueBoolean="false" valueBoolean="false" >
+            <column name="RESTRICTED" type="TINYINT" defaultValueBoolean="false" valueBoolean="false" >
                 <constraints nullable="false"/>
             </column>
         </addColumn>

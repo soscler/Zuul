@@ -4,6 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.codehaus.jackson.annotate.JsonBackReference
 import com.confluex.zuul.data.config.ZuulDataConstants
+import org.hibernate.annotations.Type
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -38,6 +39,7 @@ class SettingsEntry implements Serializable {
 
     String value
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TINYINT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean encrypted = false
 }

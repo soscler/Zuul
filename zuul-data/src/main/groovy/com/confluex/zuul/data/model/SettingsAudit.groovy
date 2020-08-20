@@ -3,7 +3,9 @@ package com.confluex.zuul.data.model
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import com.confluex.zuul.data.config.ZuulDataConstants
+import org.hibernate.annotations.Type
 
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -21,6 +23,8 @@ class SettingsAudit implements Serializable {
 
     String settingsKey
     String settingsValue
+    @Column(columnDefinition = "TINYINT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean encrypted
     String groupName
     String groupEnvironment

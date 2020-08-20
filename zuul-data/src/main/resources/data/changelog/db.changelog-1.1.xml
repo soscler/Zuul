@@ -10,7 +10,7 @@
             </column>
             <column name="SETTINGS_KEY" type="VARCHAR(255)"/>
             <column name="SETTINGS_VALUE" type="VARCHAR(255)"/>
-            <column name="ENCRYPTED" type="BOOLEAN"/>
+            <column name="ENCRYPTED" type="TINYINT"/>
             <column name="GROUP_NAME" type="VARCHAR(255)"/>
             <column name="GROUP_ENVIRONMENT" type="VARCHAR(12)"/>
             <column name="MODIFIED_BY" type="VARCHAR(255)"/>

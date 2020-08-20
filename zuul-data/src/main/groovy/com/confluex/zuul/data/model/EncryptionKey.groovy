@@ -10,6 +10,7 @@ import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import com.confluex.zuul.data.config.ZuulDataConstants
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.annotations.Type
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -42,6 +43,8 @@ class EncryptionKey implements Serializable {
     @Column(nullable = false, length = 2000)
     String password
 
+    @Column(columnDefinition = "TINYINT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean defaultKey = false
 
     @Column(nullable = false, length = 255)
