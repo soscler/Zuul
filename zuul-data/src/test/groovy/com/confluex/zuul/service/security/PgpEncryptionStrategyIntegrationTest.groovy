@@ -58,7 +58,7 @@ class PgpEncryptionStrategyIntegrationTest {
         executeGpgIfAvailable("--list-packets ${encrypted}") { String response ->
             assert response
             def lines = response.split("\n")
-            assert lines[4].trim() == "length: 56"
+            assert lines[6].trim() == "length: 56"
         }
     }
 
