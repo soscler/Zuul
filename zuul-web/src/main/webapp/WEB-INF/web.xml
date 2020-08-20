@@ -19,6 +19,17 @@
         <param-value>security-openid</param-value>
     </context-param>
 
+    <jsp-config>
+        <taglib>
+            <taglib-uri>zuulTagLib</taglib-uri>
+            <taglib-location>/WEB-INF/tags/zuul/zuul.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>funTagLib</taglib-uri>
+            <taglib-location>/WEB-INF/tags/functions.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
