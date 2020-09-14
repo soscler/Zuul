@@ -2,18 +2,13 @@ package com.confluex.zuul.web
 
 import com.confluex.util.pagination.Pagination
 import com.confluex.zuul.data.config.ZuulDataConstants
-import com.confluex.zuul.data.model.EncryptionKey
-import com.confluex.zuul.data.model.Environment
-import com.confluex.zuul.data.model.Settings
-import com.confluex.zuul.data.model.SettingsEntry
-import com.confluex.zuul.data.model.SettingsGroup
+import com.confluex.zuul.data.model.*
 import com.confluex.zuul.service.ZuulService
 import com.confluex.zuul.web.config.ZuulWebConstants
 import com.confluex.zuul.web.test.ControllerTestMixin
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers
 import org.springframework.beans.propertyeditors.StringTrimmerEditor
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.WebDataBinder
@@ -161,7 +156,7 @@ public class SettingsControllerTest {
         def group = new SettingsGroup()
         when(controller.zuulService.findSettingsGroupByNameAndEnvironment("group", "env")).thenReturn(group)
         def mv = controller.addEntrySubmit("group", "env", entry, mockFailureBindingResult())
-        verify(controller.zuulService, never()).save(Matchers.any(SettingsEntry))
+        verify(controller.zuulService, never()).save((SettingsEntry) any(SettingsEntry))
         assert mv.viewName == "/settings/entry"
         assert mv.model.group.is(group)
     }
@@ -259,7 +254,7 @@ public class SettingsControllerTest {
                 new SettingsEntry(key: "abc", value: '456', group: groupB),
                 new SettingsEntry(key: "abcdef", value: 'false', group: groupA)
         ]
-        when(controller.zuulService.search(eq("abc"), Matchers.any(Pagination))).thenReturn(entries)
+        when(controller.zuulService.search(eq("abc"), any(Pagination))).thenReturn(entries)
         def mv = controller.search("abc", new MockHttpServletRequest())
         assert mv.model.results == [
                 (groupA): [entries[0], entries[2]],
