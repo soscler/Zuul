@@ -1,0 +1,4 @@
+id, userName, firstName, lastName, email, enabled
+1, http://fake.openid.com/bmurray, Bill, Murray, bmurray@ghostbusters.com,true
+2, http://fake.openid.com/hramis, Harold, Ramis, hramis@ghostbusters.com,true
+3, http://fake.openid.com/daykroyd, Dan, Aykroyd, daykroyd@ghostbusters.com,true

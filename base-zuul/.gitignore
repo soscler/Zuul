@@ -1,11 +1,9 @@
 plugins/core/
 web-app/WEB-INF/
-.idea
+.idea/
 target/
 *.iml
 *.ipr
 *.iws
-*.ids
 security.properties
 *.log
-trustdb.gpg
