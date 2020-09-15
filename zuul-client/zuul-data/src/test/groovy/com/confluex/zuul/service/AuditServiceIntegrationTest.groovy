@@ -10,7 +10,7 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-import org.springframework.test.annotation.NotTransactional
+// import org.springframework.test.annotation.NotTransactional
 
 import javax.annotation.Resource
 
@@ -32,8 +32,13 @@ public class AuditServiceIntegrationTest extends ZuulDataIntegrationTest {
     @Autowired
     UserDao userDao
 
+    /**
+     * TODO: Reinvestigate @NotTransactional use
+     * Deprecated use of @NotTransactional
+     * @see https://stackoverflow.com/questions/15487243/nottransactional-alternatives
+     */
     @Test
-    @NotTransactional
+    // @NotTransactional
     void shouldLogAuditsWithTaskExecutor() {
         def count = settingsAuditDao.count().toInteger() // no loss with this test data set
         def entry = settingsEntryDao.findOne(1)
