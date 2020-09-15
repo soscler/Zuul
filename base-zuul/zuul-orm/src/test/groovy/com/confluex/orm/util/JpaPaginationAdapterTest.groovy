@@ -25,9 +25,17 @@ class JpaPaginationAdapterTest {
     }
 
     @Test
+    /**
+     * This test fails with spring 4.x
+     * Spring data 2.x requires that Sort is not null
+     * TODO: MAKE SURE TO NOT PROVIDE NULL VALUES WHEN UPDATED TO spring data 2.x
+     * @see org.springframework.data.domain.PageRequest
+     * @see org.springframework.data.domain.Sort.Order
+     */
     void shouldNotBuildSortIfCriteriaIsNotAvailable() {
         def pagination = new SimplePagination(page: 3, max: 10)
         def adapter = new JpaPaginationAdapter(pagination)
         assert !adapter.sort
+        assert true;
     }
 }
