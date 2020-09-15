@@ -141,22 +141,22 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
-                <version>${spring.version}</version>
+                <version>4.0.0.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-taglibs</artifactId>
-                <version>${spring.version}</version>
+                <version>4.0.0.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-openid</artifactId>
-                <version>${spring.version}</version>
+                <version>4.0.0.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
-                <version>${spring.version}</version>
+                <version>4.0.0.RELEASE</version>
             </dependency>
 
             <!-- Apache Commons -->
@@ -327,6 +327,7 @@
             </dependency>
 
             <!-- Test -->
+            <!-- To be updated -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -350,6 +351,9 @@
     </dependencyManagement>
 
     <dependencies>
+
+
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
