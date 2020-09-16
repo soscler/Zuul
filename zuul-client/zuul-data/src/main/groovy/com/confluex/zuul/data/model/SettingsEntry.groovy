@@ -2,7 +2,7 @@ package com.confluex.zuul.data.model
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.codehaus.jackson.annotate.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.confluex.zuul.data.config.ZuulDataConstants
 
 import javax.persistence.Column

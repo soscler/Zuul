@@ -3,8 +3,8 @@ package com.confluex.zuul.data.model
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
-import org.codehaus.jackson.annotate.JsonBackReference
-import org.codehaus.jackson.annotate.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.confluex.zuul.data.config.ZuulDataConstants
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy

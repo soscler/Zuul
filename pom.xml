@@ -312,11 +312,13 @@
                 <version>2.0.5</version>
             </dependency>
             <!-- To be updated -->
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
             <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.8</version>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.1.0</version>
             </dependency>
+
 
             <!-- Date Util -->
             <!-- To be updated -->
