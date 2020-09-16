@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.InsufficientAuthenticationException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.openid.OpenIDAttribute
 import org.springframework.security.openid.OpenIDAuthenticationStatus
 import org.springframework.security.openid.OpenIDAuthenticationToken
@@ -39,17 +40,15 @@ public class OpenIdRegistrationHandlerTest {
 
 
     @Test
-    @Ignore
     void shouldDenyWhenConverterThrowsException() {
         def exception = mock(AuthenticationException)
         when(handler.authenticationConverter.convert(Matchers.any(Authentication))).thenThrow(new InsufficientAuthenticationException("test error"))
         handler.onAuthenticationFailure(mockRequest, mockResponse, exception)
-        verify(handler.authenticationConverter).convert(exception.authentication)
+        verify(handler.authenticationConverter).convert(SecurityContextHolder.context.authentication)
         assert mockResponse.status == 401
     }
 
     @Test
-    @Ignore
     void shouldSaveAndRedirectWhenConverterCreatesUser() {
         def mockUser = new User()
         def exception = mock(AuthenticationException)
@@ -59,7 +58,7 @@ public class OpenIdRegistrationHandlerTest {
         when(handler.securityService.countUsers()).thenReturn(1L)
         handler.onAuthenticationFailure(mockRequest, mockResponse, exception)
         verify(handler.securityService).createNewUser(mockUser,  handler.defaultRoles)
-        verify(handler.authenticationManager).authenticate(exception.authentication)
+        verify(handler.authenticationManager).authenticate(SecurityContextHolder.context.authentication)
 
         assert mockResponse.status < 400
         assert mockResponse.redirectedUrl == handler.registrationUrl
@@ -71,7 +70,6 @@ public class OpenIdRegistrationHandlerTest {
      * @see org.springframework.security.core.AuthenticationException 3.1.2.RELEASE
      */
     @Test
-    @Ignore
     void shouldUseFirstUserRolesWhenNoUsersExist() {
         def mockUser = new User()
         def exception = mock(AuthenticationException)
@@ -81,7 +79,7 @@ public class OpenIdRegistrationHandlerTest {
         when(handler.securityService.countUsers()).thenReturn(0L)
         handler.onAuthenticationFailure(mockRequest, mockResponse, exception)
         verify(handler.securityService).createNewUser(mockUser, handler.firstUserRoles)
-        verify(handler.authenticationManager).authenticate(exception.authentication)
+        verify(handler.authenticationManager).authenticate(SecurityContextHolder.context.authentication)
 
         assert mockResponse.status < 400
         assert mockResponse.redirectedUrl == handler.registrationUrl
