@@ -11,7 +11,7 @@ import org.springframework.web.servlet.view.RedirectView
 
 import javax.servlet.http.HttpServletResponse
 
-@Controller
+@RestController
 class SystemAdminServicesController {
 
     @Autowired
@@ -48,26 +48,23 @@ class SystemAdminServicesController {
         return view
     }
 
+    // TODO: Should I add produces = ['application/json']?
     @RequestMapping(value = "/system/keys/default.json", method = RequestMethod.GET)
-    @ResponseBody
     EncryptionKey getDefaultKey() {
         return zuulService.findDefaultKey()
     }
 
     @RequestMapping(value = "/system/keys/{name}.json", method = RequestMethod.GET)
-    @ResponseBody
     EncryptionKey findKeyByName(@PathVariable String name) {
         return zuulService.findKeyByName(name)
     }
 
     @RequestMapping(value = "/system/keys.json", method = RequestMethod.GET)
-    @ResponseBody
     List<EncryptionKey> listKeys() {
         return zuulService.listEncryptionKeys()
     }
 
     @RequestMapping(value = "/system/keys/{name}.json", method = RequestMethod.PUT)
-    @ResponseBody
     EncryptionKey updateKeyByName(@PathVariable String name, @RequestBody EncryptionKey formKey) {
         def key = findKeyByName(name)
         key.description = formKey.description
