@@ -28,6 +28,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
         <s:intercept-url pattern="/" access="permitAll"/>
         <s:form-login login-page="/login/" authentication-failure-url="/login?login_error=authentication"/>
         <s:logout logout-url="/logout" logout-success-url="/"/>
+        <s:csrf disabled="true"/>
     </s:http>
 
 </beans>

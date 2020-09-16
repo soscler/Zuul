@@ -122,7 +122,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a onclick="document.getElementById('logout-form').submit();" href="#">
+                                        <a href="${pageContext.request.contextPath}/logout">
                                             <i class="icon-off"></i>
                                             Logout
                                         </a>
@@ -169,9 +169,9 @@
         <span class="label label-warning">Version: ${revision}</span>
     </footer>
 </div>
-<form id="logout-form" action="<c:url value="/logout"/>" method="post">
+<%--<form id="logout-form" action="<c:url value="/logout"/>" method="post">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-</form>
+</form>--%>
 <security:authorize access="hasRole('ROLE_USER')">
     <script>
         $(function () {
