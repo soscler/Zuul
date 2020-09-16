@@ -14,22 +14,23 @@
         <div class="page-header">
             <h1>Login</h1>
         </div>
-        <form class="form-horizontal" method='POST' action='${pageContext.request.contextPath}/j_spring_security_check'>
+        <form class="form-horizontal" method='POST' action='${pageContext.request.contextPath}/login'>
             <div class="control-group">
-                <label class="control-label" for="j_username">Username</label>
+                <label class="control-label" for="username">Username</label>
                 <div class="controls">
-                    <input type="text" name="j_username" id="j_username" value="${fn:escapeXml(SPRING_SECURITY_LAST_USERNAME)}" />
+                    <input type="text" name="username" id="username" value="${fn:escapeXml(SPRING_SECURITY_LAST_USERNAME)}" />
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="j_password">Password</label>
+                <label class="control-label" for="password">Password</label>
                 <div class="controls">
-                    <input type="password" name="j_password" id="j_password"/>
+                    <input type="password" name="password" id="password"/>
                 </div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
     </div>
 

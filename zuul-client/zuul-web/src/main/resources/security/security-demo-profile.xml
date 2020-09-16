@@ -26,7 +26,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
         <s:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
         <s:intercept-url pattern="/audit/**" access="hasRole('ROLE_ADMIN')"/>
         <s:intercept-url pattern="/" access="permitAll"/>
-        <s:form-login login-page="/login" authentication-failure-url="/login?login_error=authentication"/>
+        <s:form-login login-page="/login/" authentication-failure-url="/login?login_error=authentication"/>
         <s:logout logout-url="/logout" logout-success-url="/"/>
     </s:http>
 
