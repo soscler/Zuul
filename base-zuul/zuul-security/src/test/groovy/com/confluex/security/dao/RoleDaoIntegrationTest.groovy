@@ -43,6 +43,8 @@ class RoleDaoIntegrationTest extends BaseSecurityIntegrationTest {
     }
 
     @Test(expected=ConstraintViolationException)
+    // TODO:
+    // @Test
     void shouldRequireValidRoleName() {
         def role = new Role(name: "bad")
         roleDao.save(role)

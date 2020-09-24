@@ -25,7 +25,7 @@ class SettingEntryUpdateSecurityIntegrationTest extends SecurityWebIntegrationTe
         loginAsUser(LOGIN_ROLE_ADMIN)
         def entry = updateUnrestrictedEntry()
         settingsServicesController.updateEntryJson(entry.id, entry)
-        assert settingsEntryDao.findOne(entry.id).value == "updated"
+        assert settingsEntryDao.findById(entry.id).get().value == "updated"
     }
 
     @Test(expected = AccessDeniedException)
@@ -40,7 +40,7 @@ class SettingEntryUpdateSecurityIntegrationTest extends SecurityWebIntegrationTe
         loginAsUser(LOGIN_ROLE_SYSTEM_ADMIN)
         def entry = updateRestrictedEntry()
         settingsServicesController.updateEntryJson(entry.id, entry)
-        assert settingsEntryDao.findOne(entry.id).value == "updated"
+        assert settingsEntryDao.findById(entry.id).get().value == "updated"
     }
 
 

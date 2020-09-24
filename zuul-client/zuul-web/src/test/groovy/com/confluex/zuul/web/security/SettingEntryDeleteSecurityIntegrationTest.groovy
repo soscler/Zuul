@@ -27,7 +27,7 @@ class SettingEntryDeleteSecurityIntegrationTest extends SecurityWebIntegrationTe
         def group = findUnRestrictedGroup()
         def entry = group.entries.first()
         settingsServicesController.deleteEntryJson(entry.id, new MockHttpServletResponse())
-        assert !settingsEntryDao.findOne(entry.id)
+        assert !settingsEntryDao.findById(entry.id).get()
     }
 
     @Test(expected = AccessDeniedException)
@@ -44,7 +44,7 @@ class SettingEntryDeleteSecurityIntegrationTest extends SecurityWebIntegrationTe
         def group = findRestrictedGroup()
         def entry = group.entries.first()
         settingsServicesController.deleteEntryJson(entry.id, new MockHttpServletResponse())
-        assert !settingsEntryDao.findOne(entry.id)
+        assert !settingsEntryDao.findById(entry.id).get()
     }
 
 }

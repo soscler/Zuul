@@ -41,7 +41,7 @@ class AuditServiceImplTest {
     void shouldNotRecordDecryptedValues() {
         def type = SettingsAudit.AuditType.DECRYPT
         def group = createGroup()
-        when(service.settingsEntryDao.findOne(1)).thenReturn(group.entries.first())
+        when(service.settingsEntryDao.findById(1)).thenReturn(Optional.of(group.entries.first()))
         service.logAudit(new User(userName: "userA"), group.entries.first(), type)
         def args = ArgumentCaptor.forClass(SettingsAudit)
         verify(service.settingsAuditDao).save(args.capture())
@@ -52,7 +52,7 @@ class AuditServiceImplTest {
     void shouldNotRecordEncryptedValues() {
         def type = SettingsAudit.AuditType.ENCRYPT
         def group = createGroup()
-        when(service.settingsEntryDao.findOne(1)).thenReturn(group.entries.first())
+        when(service.settingsEntryDao.findById(1)).thenReturn(Optional.of(group.entries.first()))
         service.logAudit(new User(userName: "userA"), group.entries.first(), type)
         def args = ArgumentCaptor.forClass(SettingsAudit)
         verify(service.settingsAuditDao).save(args.capture())
@@ -65,13 +65,13 @@ class AuditServiceImplTest {
         def filter = [id: 1]
         def pagination = new SimplePagination<SettingsAudit>(filter: filter)
         def page = mock(Page)
-        when(service.settingsAuditDao.findAll(any(Specification), any(Pageable))).thenReturn(page)
+        when(service.settingsAuditDao.findAll(any(Specification) as SettingsAuditFilter, any(Pageable))).thenReturn(page)
         when(page.content).thenReturn(audits)
 
         def results = service.findSettingAudits(pagination)
         def specArg = ArgumentCaptor.forClass(SettingsAuditFilter)
         def pagingArg = ArgumentCaptor.forClass(JpaPaginationAdapter)
-        verify(service.settingsAuditDao).findAll(specArg.capture(), pagingArg.capture())
+        verify(service.settingsAuditDao).findAll(specArg.capture() as SettingsAuditFilter, pagingArg.capture())
         assert specArg.value.filter == filter
         assert pagingArg.value.pageNumber == pagination.page
         assert pagingArg.value.pageSize == pagination.max
@@ -132,7 +132,7 @@ class AuditServiceImplTest {
     @Test
     void shouldSaveAuditSettingsWhenDeletingEntryById() {
         def group = createGroup()
-        when(service.settingsEntryDao.findOne(1)).thenReturn(group.entries.first())
+        when(service.settingsEntryDao.findById(1)).thenReturn(Optional.of(group.entries.first()))
         service.logAudit(new User(userName: "userA"), group.entries.first(), SettingsAudit.AuditType.DELETE)
         def args = ArgumentCaptor.forClass(SettingsAudit)
         verify(service.settingsAuditDao).save(args.capture())
@@ -208,7 +208,7 @@ class AuditServiceImplTest {
         )
         group.addToEntries(new SettingsEntry(key: "property.a", value: "1"))
         group.addToEntries(new SettingsEntry(key: "property.b", value: "mumbojumbo", encrypted: true))
-        when(service.settingsGroupDao.findOne(22)).thenReturn(group)
+        when(service.settingsGroupDao.findById(22)).thenReturn(Optional.of(group))
         return group
     }
 

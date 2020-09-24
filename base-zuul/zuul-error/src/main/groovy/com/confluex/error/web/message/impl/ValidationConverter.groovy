@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.RequestContextUtils
 import javax.servlet.http.HttpServletRequest
 import com.confluex.error.web.message.ErrorCodes
 import com.confluex.error.web.message.HttpErrorMessage
+import org.springframework.format.annotation.DateTimeFormat
 
 /**
  * Default implementation of HttpErrorMessageConverter which knows how to convert DevNullException instances

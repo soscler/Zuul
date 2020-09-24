@@ -26,7 +26,7 @@ class SystemAdminServicesControllerIntegrationTest extends ZuulWebIntegrationTes
         loginAsUser(LOGIN_ROLE_SYSTEM_ADMIN)
 
         def defaultKey = zuulService.findDefaultKey()
-        def key = encryptionKeyDao.findOne("Human Resources Key")
+        def key = encryptionKeyDao.findById("Human Resources Key").get()
         def effectedGroups = settingsGroupDao.findByKey(key)
 
         assert key

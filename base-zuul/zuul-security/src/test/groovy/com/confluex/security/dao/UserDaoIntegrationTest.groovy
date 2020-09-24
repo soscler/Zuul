@@ -64,7 +64,7 @@ class UserDaoIntegrationTest extends BaseSecurityIntegrationTest {
         def bill = dao.findByUserName("http://fake.openid.com/bmurray")
         assert bill.roles.size() == 1
         assert bill.roles.first().name == "ROLE_USER"
-        dao.delete(bill.id)
+        dao.deleteById(bill.id)
         assert roleDao.findByName("ROLE_USER")
     }
 
@@ -78,6 +78,8 @@ class UserDaoIntegrationTest extends BaseSecurityIntegrationTest {
     }
 
     @Test(expected=ConstraintViolationException)
+    // TODO
+    // @Test
     void shouldRequireFormattedEmailAddress() {
         def user = new User(firstName:"Joe", lastName: "Blow", email: "bademail")
         dao.save(user)

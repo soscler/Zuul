@@ -11,7 +11,7 @@ class EncryptionKeyDaoIntegrationTest extends ZuulDataIntegrationTest {
 
     @Test
     void shouldFindKeyByNameAndMapCorrectly() {
-        def result = dao.findOne("Default Key")
+        def result = dao.findById("Default Key").get()
         assert result.name == "Default Key"
         assert result.description == "Default key which can be used for evaluation purposes.."
         assert result.password == "badpassword1"

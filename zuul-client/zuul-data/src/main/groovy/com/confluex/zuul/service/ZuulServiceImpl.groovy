@@ -73,15 +73,15 @@ class ZuulServiceImpl implements ZuulService {
     @Autowired
     AuditService auditService
 
-    @Autowired
-    Validator validator
+    //@Autowired
+    //Validator validator
 
     Lock settingsLock = new ReentrantLock()
 
     @Transactional(readOnly = false)
     SettingsGroup createEmptySettingsGroup(String name, String environmentName) {
         log.info("Creating empty group for name: {}, environment: {}", name, environmentName)
-        def env = environmentDao.findOne(environmentName)
+        def env = environmentDao.findById(environmentName).get()
         def key = findDefaultKey()
         def settings = findOrCreateSettingsByName(name)
         def group = new SettingsGroup(environment: env, key: key)
@@ -105,7 +105,7 @@ class ZuulServiceImpl implements ZuulService {
     @Transactional(readOnly = false)
     SettingsGroup createSettingsGroupFromCopy(String name, String environmentName, SettingsGroup copy) {
         log.info("Creating copy for name:{}, env:{} from: {}", name, environmentName, copy)
-        def env = environmentDao.findOne(environmentName)
+        def env = environmentDao.findById(environmentName).get()
         def group = new SettingsGroup(environment: env, key: copy.key)
         findOrCreateSettingsByName(name).addToGroups(group)
         copy.entries.each {
@@ -120,7 +120,7 @@ class ZuulServiceImpl implements ZuulService {
     void deleteSettingsGroup(SettingsGroup group) {
         log.info("Deleteing settings group: {} ", group)
         auditService.logAudit(securityService.currentUser, group, SettingsAudit.AuditType.DELETE)
-        settingsGroupDao.delete(group.id)
+        settingsGroupDao.deleteById(group.id)
     }
 
     List<SettingsGroup> findSettingsGroupByName(String name) {
@@ -139,7 +139,7 @@ class ZuulServiceImpl implements ZuulService {
 
     @Transactional(readOnly = false)
     void deleteEnvironment(String name) {
-        environmentDao.delete(name)
+        environmentDao.deleteById(name)
     }
 
     @Transactional(readOnly = false)
@@ -151,7 +151,7 @@ class ZuulServiceImpl implements ZuulService {
 
     @Transactional(readOnly = false)
     Boolean toggleEnvironmentRestriction(String name) {
-        def env = environmentDao.findOne(name)
+        def env = environmentDao.findById(name).get()
         env.restricted = !env.restricted
         environmentDao.save(env)
         return env.restricted
@@ -164,7 +164,7 @@ class ZuulServiceImpl implements ZuulService {
         names.eachWithIndex { name, i ->
             environments.find {it.name == name }?.ordinal = i
         }
-        return environmentDao.save(environments)
+        return environmentDao.saveAll(environments)
     }
 
     @Transactional(readOnly = false)
@@ -200,12 +200,12 @@ class ZuulServiceImpl implements ZuulService {
     @Transactional(readOnly = false)
     void delete(Settings settings) {
         log.info("Deleting settings: {}", settings.name)
-        settingsDao.delete(settings.id)
+        settingsDao.deleteById(settings.id)
     }
 
     @Transactional(readOnly = false)
     SettingsEntry encryptSettingsEntryValue(Integer entryId) {
-        def entry = settingsEntryDao.findOne(entryId)
+        def entry = settingsEntryDao.findById(entryId).get()
         if (entry.encrypted) {
             throw new ConflictingOperationException("Cannot encrypt value that are already encrypted. Entry ID: " + entryId)
         }
@@ -216,7 +216,7 @@ class ZuulServiceImpl implements ZuulService {
 
     @Transactional(readOnly = false)
     SettingsEntry decryptSettingsEntryValue(Integer entryId) {
-        def entry = settingsEntryDao.findOne(entryId)
+        def entry = settingsEntryDao.findById(entryId).get()
         if (!entry.encrypted) {
             throw new ConflictingOperationException("Cannot decrypt value that are already decrypted. Entry ID: " + entryId)
         }
@@ -226,14 +226,14 @@ class ZuulServiceImpl implements ZuulService {
     }
 
     SettingsEntry findSettingsEntry(Integer id) {
-        return settingsEntryDao.findOne(id)
+        return settingsEntryDao.findById(id).get()
     }
 
     @Transactional(readOnly = false)
     void deleteSettingsEntry(SettingsEntry entry) {
         log.info("Deleteing entry: {}", entry)
         auditService.logAudit(securityService.currentUser, entry, SettingsAudit.AuditType.DELETE)
-        settingsEntryDao.delete(entry.id)
+        settingsEntryDao.deleteById(entry.id)
     }
 
     @Transactional(readOnly = false)
@@ -311,14 +311,14 @@ class ZuulServiceImpl implements ZuulService {
 
     @Transactional(readOnly = false)
     EncryptionKey changeDefaultKey(String name) {
-        def newKey = encryptionKeyDao.findOne(name)
+        def newKey = encryptionKeyDao.findById(name).get()
         if (newKey.defaultKey) {
             return newKey
         }
         def oldKey = findDefaultKey()
         newKey.defaultKey = true
         oldKey.defaultKey = false
-        encryptionKeyDao.save([newKey, oldKey])
+        encryptionKeyDao.saveAll([newKey, oldKey])
         return newKey
     }
 
@@ -330,13 +330,13 @@ class ZuulServiceImpl implements ZuulService {
     }
 
     EncryptionKey findKeyByName(String name) {
-        return encryptionKeyDao.findOne(name)
+        return encryptionKeyDao.findById(name).get()
     }
 
     @Transactional(readOnly = false)
     EncryptionKey saveKey(EncryptionKey key) {
         errorIfInvalid(key, "key")
-        def existingKey = encryptionKeyDao.findOne(key.name)
+        def existingKey = encryptionKeyDao.findById(key.name).get()
         if (existingKey && !existingKey.compatibleWith(key)) {
             reEncryptEntriesWithMatchingKey(existingKey, key)
         }
@@ -345,7 +345,7 @@ class ZuulServiceImpl implements ZuulService {
 
     @Transactional(readOnly = false)
     void deleteKey(String name) {
-        def key = encryptionKeyDao.findOne(name)
+        def key = encryptionKeyDao.findById(name).get()
         def existingGroups = settingsGroupDao.findByKey(key)
         if (key.defaultKey) {
             throw new InvalidOperationException("Cannot delete default key")
@@ -361,7 +361,7 @@ class ZuulServiceImpl implements ZuulService {
         existingGroups.each { group ->
             changeKey(group, defaultKey)
         }
-        encryptionKeyDao.delete(name)
+        encryptionKeyDao.deleteById(name)
     }
 
 
@@ -377,7 +377,7 @@ class ZuulServiceImpl implements ZuulService {
 
     protected void errorIfInvalid(Object bean, String name) {
         def errors = new BeanPropertyBindingResult(bean, name)
-        validator.validate(bean, errors)
+        //validator.validate(bean, errors)
         if (errors.hasErrors()) {
             throw new ValidationException(errors)
         }

@@ -21,13 +21,13 @@ class EnvironmentControllerIntegrationTest extends ZuulWebIntegrationTest {
     @Test
     void shouldCascadeDeleteEnvironmentSettings() {
         loginAsUser(LOGIN_ROLE_SYSTEM_ADMIN)
-        def env = environmentDao.findOne("prod")
+        def env = environmentDao.findById("prod").get()
         def groups = env.groups
         assert groups
         controller.delete("prod")
-        assert !environmentDao.findOne("prod")
+        assert !environmentDao.findById("prod").get()
         groups.each {
-            assert !settingsGroupDao.findOne(it.id)
+            assert !settingsGroupDao.findById(it.id).get()
         }
     }
 }

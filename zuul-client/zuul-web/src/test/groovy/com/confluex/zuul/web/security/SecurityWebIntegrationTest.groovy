@@ -39,13 +39,13 @@ abstract class SecurityWebIntegrationTest extends ZuulWebIntegrationTest {
     }
 
     protected Environment findRestrictedEnvironment() {
-        def env = environmentDao.findOne("prod")
+        def env = environmentDao.findById("prod").get()
         assert env.restricted
         return env
     }
 
     protected Environment findUnRestrictedEnvironment() {
-        def env = environmentDao.findOne("dev")
+        def env = environmentDao.findById("dev").get()
         assert !env.restricted
         return env
     }

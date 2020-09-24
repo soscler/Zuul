@@ -43,7 +43,8 @@ class EnvironmentPermissionsEvaluatorTest {
     void shouldQueryForEnvironmentWhenIdentifierIsSupplied() {
         def authentication = createAuthentication([ZuulDataConstants.ROLE_SYSTEM_ADMIN])
         assert evaluator.hasPermission(authentication, "dev", Environment.class.name, ZuulDataConstants.PERMISSION_ADMIN)
-        verify(evaluator.environmentDao).findOne("dev")
+        // TODO: review get()
+        verify(evaluator.environmentDao).findById("dev")
     }
 
     // --------- PERMISSION_ADMIN

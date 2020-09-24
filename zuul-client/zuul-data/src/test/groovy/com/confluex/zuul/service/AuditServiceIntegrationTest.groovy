@@ -41,8 +41,8 @@ public class AuditServiceIntegrationTest extends ZuulDataIntegrationTest {
     // @NotTransactional
     void shouldLogAuditsWithTaskExecutor() {
         def count = settingsAuditDao.count().toInteger() // no loss with this test data set
-        def entry = settingsEntryDao.findOne(1)
-        def user = userDao.findOne(1)
+        def entry = settingsEntryDao.findById(1).get()
+        def user = userDao.findById(1).get()
         service.logAudit(user, entry, SettingsAudit.AuditType.MOD)
 //    assert checkExecutionStatus(1, 5, 100)
         assert checkExecutionStatus(count + 1, 5, 100)
@@ -51,6 +51,7 @@ public class AuditServiceIntegrationTest extends ZuulDataIntegrationTest {
         assert audit.groupEnvironment == entry.group.environment.name
         assert audit.groupName == entry.group.name
         assert audit.modifiedBy == user.userName
+        // TODO: removed clearTime api from groovy 3.x
         assert audit.modifiedDate.clearTime() == new Date().clearTime()
         assert audit.settingsKey == entry.key
         assert audit.settingsValue == entry.value

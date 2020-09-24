@@ -91,20 +91,20 @@ public class SecurityServiceImplTest {
         def roleId = 123
         def userId = 456
         def roles = [new Role(id: -1), new Role(id: roleId)]
-        def user = new User(id: userId, roles: roles)
-        when(service.userDao.findOne(userId)).thenReturn(user)
+        def user = new User(id: userId, roles: roles)        //user.id = userId
+        when(service.userDao.findById(userId)).thenReturn(Optional.of(user))
         service.removeRoleFromUser(roleId, userId)
         verify(service.userDao).save(user)
         assert user.roles.size() == 1
-        assert user.roles.first() != roleId
+        assert user.roles.first().id != roleId
     }
 
     @Test
     void shouldAddRoleToUserAndSave() {
         def newRole = new Role(id:456)
         def user = new User(id: 1, roles: [new Role(id: 123)])
-        when(service.userDao.findOne(user.id)).thenReturn(user)
-        when(service.roleDao.findOne(newRole.id)).thenReturn(newRole)
+        when(service.userDao.findById(user.id)).thenReturn(Optional.of(user))
+        when(service.roleDao.findById(newRole.id)).thenReturn(Optional.of(newRole))
         service.addRoleToUser(newRole.id, user.id)
         verify(service.userDao).save(user)
         assert user.roles.size() == 2
@@ -114,7 +114,7 @@ public class SecurityServiceImplTest {
     @Test
     void shouldDeleteUser() {
         service.deleteUser(1)
-        verify(service.userDao).delete(1)
+        verify(service.userDao).deleteById(1)
     }
 
     @Test

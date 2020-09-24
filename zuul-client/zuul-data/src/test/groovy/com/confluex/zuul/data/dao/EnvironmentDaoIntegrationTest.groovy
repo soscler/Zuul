@@ -13,9 +13,9 @@ class EnvironmentDaoIntegrationTest extends ZuulDataIntegrationTest {
 
     @Test
     void findOneShouldRetrieveAndMapResults() {
-        assert dao.findOne("prod").name == "prod"
-        assert dao.findOne("qa").name == "qa"
-        assert dao.findOne("dev").name == "dev"
+        assert dao.findById("prod").get().name == "prod"
+        assert dao.findById("qa").get().name == "qa"
+        assert dao.findById("dev").get().name == "dev"
     }
 
     @Test(expected = ConstraintViolationException)

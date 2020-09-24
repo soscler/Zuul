@@ -70,8 +70,8 @@ public class ZuulServiceImplTest {
                 encryptionStrategy: mock(EncryptionStrategy),
                 auditService: mock(AuditService),
                 securityService: mock(SecurityService),
-                templateMessage: templateMessage,
-                validator: mock(Validator)
+                templateMessage: templateMessage/*,
+                validator: mock(Validator)*/
         )
     }
 
@@ -85,7 +85,7 @@ public class ZuulServiceImplTest {
     void shouldDeleteSettings() {
         def settings = new Settings(id: 1, name: "done for")
         service.delete(settings)
-        verify(service.settingsDao).delete(settings.id)
+        verify(service.settingsDao).deleteById(settings.id)
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ZuulServiceImplTest {
     @Test
     void shouldDeleteEnvironmentWithGivenName() {
         service.deleteEnvironment("test")
-        verify(service.environmentDao).delete("test")
+        verify(service.environmentDao).deleteById("test")
     }
 
     @Test
@@ -211,7 +211,7 @@ public class ZuulServiceImplTest {
         def key = new EncryptionKey(name: "test", password: "abc")
         when(service.encryptionKeyDao.save(key)).thenReturn(key)
         def result = service.saveKey(key)
-        verify(service.encryptionKeyDao).findOne("test")
+        verify(service.encryptionKeyDao).findById("test").get()
         verify(service.encryptionKeyDao).save(key)
         verify(service.settingsEntryDao, never()).save(Matchers.any(SettingsEntry))
         assert result.is(key)
@@ -220,7 +220,7 @@ public class ZuulServiceImplTest {
     @Test
     void shouldSaveKey() {
         def key = new EncryptionKey(name: "test", password: "abc")
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(key)
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(key))
         when(service.encryptionKeyDao.save(key)).thenReturn(key)
         def result = service.saveKey(key)
         verify(service.encryptionKeyDao).save(key)
@@ -240,7 +240,7 @@ public class ZuulServiceImplTest {
             reEncryptCount++
         }
 
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(existingKey)
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(existingKey))
         service.saveKey(newKey)
         assert reEncryptCount == 1
     }
@@ -265,14 +265,14 @@ public class ZuulServiceImplTest {
 
     @Test
     void shouldDeleteKeyByName() {
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(new EncryptionKey(defaultKey: false))
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(new EncryptionKey(defaultKey: false)))
         service.deleteKey("test")
-        verify(service.encryptionKeyDao).delete("test")
+        verify(service.encryptionKeyDao).deleteById("test")
     }
 
     @Test(expected = InvalidOperationException)
     void shouldThrowExceptionWhenDeletingDefaultKey() {
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(new EncryptionKey(defaultKey: true))
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(new EncryptionKey(defaultKey: true)))
         service.deleteKey("test")
     }
 
@@ -281,7 +281,7 @@ public class ZuulServiceImplTest {
         def key = new EncryptionKey(name: "test", algorithm: ZuulDataConstants.KEY_ALGORITHM_PGP)
         def entries = [new SettingsEntry(encrypted: false), new SettingsEntry(encrypted: true)]
         def group = new SettingsGroup(key: key, entries: entries)
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(key)
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(key))
         when(service.settingsGroupDao.findByKey(key)).thenReturn([group])
         service.deleteKey("test")
     }
@@ -291,10 +291,10 @@ public class ZuulServiceImplTest {
         def key = new EncryptionKey(name: "test", algorithm: ZuulDataConstants.KEY_ALGORITHM_PGP)
         def entries = [new SettingsEntry(encrypted: false), new SettingsEntry(encrypted: false)]
         def group = new SettingsGroup(key: key, entries: entries)
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(key)
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(key))
         when(service.settingsGroupDao.findByKey(key)).thenReturn([group])
         service.deleteKey("test")
-        verify(service.encryptionKeyDao).delete(key.name)
+        verify(service.encryptionKeyDao).deleteById(key.name)
     }
 
 
@@ -305,11 +305,11 @@ public class ZuulServiceImplTest {
         def groups = [new SettingsGroup(id: 1, key: key), new SettingsGroup(id: 2, key: key)]
 
         when(service.encryptionKeyDao.findAll()).thenReturn([key, defaultKey])
-        when(service.encryptionKeyDao.findOne("a")).thenReturn(key)
+        when(service.encryptionKeyDao.findById("a")).thenReturn(Optional.of(key))
         when(service.settingsGroupDao.findByKey(key)).thenReturn(groups)
         service.deleteKey("a")
         verify(service.settingsGroupDao).findByKey(key)
-        verify(service.encryptionKeyDao).delete("a")
+        verify(service.encryptionKeyDao).deleteById("a")
         groups.each {
             assert it.key == defaultKey
         }
@@ -334,7 +334,7 @@ public class ZuulServiceImplTest {
     @Test
     void shouldFindKeyByName() {
         def expected = new EncryptionKey(name: "test")
-        when(service.encryptionKeyDao.findOne("test")).thenReturn(expected)
+        when(service.encryptionKeyDao.findById("test")).thenReturn(Optional.of(expected))
         def result = service.findKeyByName("test")
         assert result.is(expected)
     }
@@ -347,10 +347,10 @@ public class ZuulServiceImplTest {
                 new EncryptionKey(name: "newKey", defaultKey: false),
         ]
 
-        when(service.encryptionKeyDao.findOne("newKey")).thenReturn(keys[2])
+        when(service.encryptionKeyDao.findById("newKey")).thenReturn(Optional.of(keys[2]))
         when(service.encryptionKeyDao.findAll()).thenReturn(keys)
         def updatedKey = service.changeDefaultKey("newKey")
-        verify(service.encryptionKeyDao).save([keys[2], keys[0]])
+        verify(service.encryptionKeyDao).saveAll([keys[2], keys[0]])
 
         assert updatedKey.defaultKey
         assert updatedKey == keys[2]
@@ -366,10 +366,10 @@ public class ZuulServiceImplTest {
                 new EncryptionKey(name: "newKey", defaultKey: false),
         ]
 
-        when(service.encryptionKeyDao.findOne("oldKey")).thenReturn(keys[0])
+        when(service.encryptionKeyDao.findById("oldKey")).thenReturn(Optional.of(keys[0]))
         def oldKey = service.changeDefaultKey("oldKey")
-        verify(service.encryptionKeyDao, never()).save(anyList())
-        verify(service.encryptionKeyDao, never()).save(Matchers.any(Iterable))
+        verify(service.encryptionKeyDao, never()).saveAll(anyList())
+        verify(service.encryptionKeyDao, never()).saveAll(Matchers.any(Iterable))
         assert oldKey == keys[0]
         assert keys[0].defaultKey
         assert !keys[1].defaultKey
@@ -409,7 +409,7 @@ public class ZuulServiceImplTest {
         def mockGroup = new SettingsGroup(id: 1, environment: mockEnvironment, key: mockKeys[2])
 
 
-        when(service.environmentDao.findOne(mockEnvironment.name)).thenReturn(mockEnvironment)
+        when(service.environmentDao.findById(mockEnvironment.name)).thenReturn(Optional.of(mockEnvironment))
         when(service.encryptionKeyDao.findAll()).thenReturn(mockKeys)
         when(service.settingsDao.findByName("testGroup")).thenReturn(mockSettings)
         when(service.settingsGroupDao.save(Matchers.any(SettingsGroup))).thenReturn(mockGroup)
@@ -434,7 +434,7 @@ public class ZuulServiceImplTest {
 
         when(service.settingsDao.findByName(settings.name)).thenReturn(settings)
         when(service.settingsGroupDao.save(Matchers.any(SettingsGroup))).thenReturn(group)
-        when(service.environmentDao.findOne(environment.name)).thenReturn(environment)
+        when(service.environmentDao.findById(environment.name)).thenReturn(Optional.of(environment))
         when(service.securityService.currentUser).thenReturn(user)
         def result = service.createSettingsGroupFromPropertiesFile("test-data-config", "qa", stream.inputStream)
 
@@ -448,6 +448,7 @@ public class ZuulServiceImplTest {
         assert result.entries.size() == 2
 
         assert result.entries[0].key == "jdbc.zuul.generate.ddl"
+        // TODO: review value to validate
         assert result.entries[0].value == "validate"
         assert !result.entries[0].encrypted
 
@@ -468,7 +469,7 @@ public class ZuulServiceImplTest {
         def newEnvironment = new Environment(name: "dev")
 
         when(service.settingsDao.findByName(settings.name)).thenReturn(settings)
-        when(service.environmentDao.findOne(newEnvironment.name)).thenReturn(newEnvironment)
+        when(service.environmentDao.findById(newEnvironment.name)).thenReturn(Optional.of(newEnvironment))
         service.createSettingsGroupFromCopy("some-config", "dev", group)
 
         def copy = ArgumentCaptor.forClass(SettingsGroup)
@@ -540,7 +541,7 @@ public class ZuulServiceImplTest {
         ]
         when(service.environmentDao.findAll()).thenReturn(environments)
         service.sortEnvironments(names)
-        verify(service.environmentDao).save(environments)
+        verify(service.environmentDao).saveAll(environments)
 
         assert environments[0].name == "z" && environments[0].ordinal == 0
         assert environments[1].name == "d" && environments[1].ordinal == 1
@@ -561,14 +562,14 @@ public class ZuulServiceImplTest {
     @Test(expected = ConflictingOperationException)
     void shouldErrorWhenTryingToEncryptValuesWhichAreAlreadyEncrypted() {
         def entry = new SettingsEntry(id: 1, encrypted: true)
-        when(service.settingsEntryDao.findOne(entry.id)).thenReturn(entry)
+        when(service.settingsEntryDao.findById(entry.id)).thenReturn(Optional.of(entry))
         service.encryptSettingsEntryValue(entry.id)
     }
 
     @Test(expected = ConflictingOperationException)
     void shouldErrorWhenTryingToDecryptValuesWhichAreAlreadyDecrypted() {
         def entry = new SettingsEntry(id: 1, encrypted: false)
-        when(service.settingsEntryDao.findOne(entry.id)).thenReturn(entry)
+        when(service.settingsEntryDao.findById(entry.id)).thenReturn(Optional.of(entry))
         service.decryptSettingsEntryValue(entry.id)
     }
 
@@ -578,7 +579,7 @@ public class ZuulServiceImplTest {
         def entry = new SettingsEntry(id: 1, key: "a", value: "foo")
         group.addToEntries(entry)
 
-        when(service.settingsEntryDao.findOne(entry.id)).thenReturn(entry)
+        when(service.settingsEntryDao.findById(entry.id)).thenReturn(Optional.of(entry))
         when(service.settingsEntryDao.save(entry)).thenReturn(entry)
         when(service.encryptionStrategy.encrypt(entry.value, group.key)).thenReturn("encryptedValue")
         def encryptedEntry = service.encryptSettingsEntryValue(entry.id)
@@ -593,7 +594,7 @@ public class ZuulServiceImplTest {
         def entry = new SettingsEntry(id: 1, key: "a", value: "encrypted", encrypted: true)
         group.addToEntries(entry)
 
-        when(service.settingsEntryDao.findOne(entry.id)).thenReturn(entry)
+        when(service.settingsEntryDao.findById(entry.id)).thenReturn(Optional.of(entry))
         when(service.settingsEntryDao.save(entry)).thenReturn(entry)
         when(service.encryptionStrategy.decrypt(entry.value, group.key)).thenReturn("decrypted")
         def decrypted = service.decryptSettingsEntryValue(entry.id)
@@ -605,7 +606,7 @@ public class ZuulServiceImplTest {
     @Test
     void findEntryShouldReturnResultFromDao() {
         def expected = new SettingsEntry(id: 1)
-        when(service.settingsEntryDao.findOne(1)).thenReturn(expected)
+        when(service.settingsEntryDao.findById(1)).thenReturn(Optional.of(expected))
         def result = service.findSettingsEntry(1)
         assert result.is(expected)
     }
@@ -614,7 +615,7 @@ public class ZuulServiceImplTest {
     void shouldDeleteSettingsEntry() {
         def entry = new SettingsEntry(id: 1)
         service.deleteSettingsEntry(entry)
-        verify(service.settingsEntryDao).delete(1)
+        verify(service.settingsEntryDao).deleteById(1)
     }
 
     @Test
@@ -662,14 +663,14 @@ public class ZuulServiceImplTest {
     @Test
     void deleteSettingsGroupShouldInvokeDao() {
         service.deleteSettingsGroup(new SettingsGroup(id: 1))
-        verify(service.settingsGroupDao).delete(1)
+        verify(service.settingsGroupDao).deleteById(1)
     }
 
     @Test
     void shouldSearchSettingsEntries() {
         def query = new SettingsEntrySearch("abc")
         def page = new PageImpl([new SettingsEntry(id: 1)])
-        when(service.settingsEntryDao.findAll(eq(query), any(Pageable))).thenReturn(page)
+        when(service.settingsEntryDao.findAll(eq(query) as SettingsEntrySearch, any(Pageable))).thenReturn(page)
         def results = service.search("abc", new SimplePagination<SettingsEntry>())
         assert results == page.content
     }
@@ -722,7 +723,7 @@ public class ZuulServiceImplTest {
     @Test
     void shouldToggleEnvironmentRestrictionFlagToFalseIfAlreadyTrue() {
         def environment = new Environment(name: "testEnv", restricted: true)
-        when(service.environmentDao.findOne("testEnv")).thenReturn(environment)
+        when(service.environmentDao.findById("testEnv")).thenReturn(Optional.of(environment))
         def result = service.toggleEnvironmentRestriction("testEnv")
         def arg = ArgumentCaptor.forClass(Environment)
         verify(service.environmentDao).save(arg.capture())
@@ -733,7 +734,7 @@ public class ZuulServiceImplTest {
     @Test
     void shouldToggleEnvironmentRestrictionFlagToTrueIfAlreadyFalse() {
         def environment = new Environment(name: "testEnv", restricted: false)
-        when(service.environmentDao.findOne("testEnv")).thenReturn(environment)
+        when(service.environmentDao.findById("testEnv")).thenReturn(Optional.of(environment))
         def result = service.toggleEnvironmentRestriction("testEnv")
         def arg = ArgumentCaptor.forClass(Environment)
         verify(service.environmentDao).save(arg.capture())

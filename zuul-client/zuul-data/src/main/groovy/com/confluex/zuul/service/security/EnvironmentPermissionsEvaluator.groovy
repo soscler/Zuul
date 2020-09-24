@@ -58,7 +58,8 @@ class EnvironmentPermissionsEvaluator implements PermissionEvaluator {
         if (targetType != Environment.class.name) {
             throw new NotImplementedException("Unsupported type ${targetType}. Supported type: ${Environment.class.name}")
         }
-        return hasPermission(authentication, environmentDao.findOne(targetId.toString()), permission)
+        // TODO: review get() on findById
+        return hasPermission(authentication, environmentDao.findById(targetId.toString()).get(), permission)
     }
 
     protected Boolean hasRole(Collection<GrantedAuthority> authorities, String name) {

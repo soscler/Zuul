@@ -12,7 +12,7 @@ class SettingsAuditDaoIntegrationTest extends ZuulDataIntegrationTest {
 
     @Test
     void findOneShouldRetrieveAndMapResults() {
-        def audit = settingsAuditDao.findOne(1L)
+        def audit = settingsAuditDao.findById(1L).get()
         assert audit.id == 1L
         assert audit.groupName == "app-data-config"
         assert audit.groupEnvironment == "dev"
@@ -36,6 +36,6 @@ class SettingsAuditDaoIntegrationTest extends ZuulDataIntegrationTest {
                 settingsValue: 123
         ))
         assert settingsAuditDao.count() == count + 1
-        assert audit == settingsAuditDao.findOne(audit.id)
+        assert audit == settingsAuditDao.findById(audit.id).get()
     }
 }

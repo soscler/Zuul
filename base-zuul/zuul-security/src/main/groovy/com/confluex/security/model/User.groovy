@@ -30,7 +30,7 @@ import org.apache.commons.codec.digest.DigestUtils
     @UniqueConstraint(columnNames=["userName"])
 ])
 @EqualsAndHashCode(excludes = "roles")
-@ToString(excludes = "roles", includeNames = true)
+
 class User implements Serializable, UserDetails {
 
     static final def log = LoggerFactory.getLogger(User)
